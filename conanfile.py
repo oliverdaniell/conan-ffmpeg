@@ -209,7 +209,7 @@ class FFMpegConan(ConanFile):
             new_pc = os.path.join('pkgconfig', os.path.basename(pc_name))
             self.output.warn('copy .pc file %s' % os.path.basename(pc_name))
             shutil.copy(pc_name, new_pc)
-            tools.replace_prefix_in_pc_file(new_pc, root)
+            tools.replace_prefix_in_pc_file(new_pc, tools.unix_path(root))
 
     def build(self):
         if self.is_msvc or self.is_mingw:
