@@ -334,18 +334,15 @@ class FFMpegConan(ConanFile):
             if self.options.openh264:
                 self.copy_pkg_config('openh264')
 
-            env_vars = {'PKG_CONFIG_PATH': os.path.abspath('pkgconfig')}
-
             if self.settings.compiler == 'Visual Studio':
                 args.append('--extra-cflags=-%s' % self.settings.compiler.runtime)
 
-            with tools.environment_append(env_vars):
-                env_build = AutoToolsBuildEnvironment(self, win_bash=self.is_mingw or self.is_msvc)
-                # ffmpeg's configure is not actually from autotools, so it doesn't understand standard options like
-                # --host, --build, --target
-                env_build.configure(args=args, build=False, host=False, target=False)
-                env_build.make()
-                env_build.make(args=['install'])
+            env_build = AutoToolsBuildEnvironment(self, win_bash=self.is_mingw or self.is_msvc)
+            # ffmpeg's configure is not actually from autotools, so it doesn't understand standard options like
+            # --host, --build, --target
+            env_build.configure(args=args, build=False, host=False, target=False, pkg_config_paths=[os.path.abspath('pkgconfig')])
+            env_build.make()
+            env_build.make(args=['install'])
 
     def package(self):
         with tools.chdir("sources"):
